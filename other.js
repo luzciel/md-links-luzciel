@@ -22,56 +22,50 @@ const cyanColor = clc.cyan;
 
 const allowedExtensions = /(.md|.markdown|.mdown|.mkdn|.mkd|.mdwn|.mdtxt|.text|.Rmd )$/i;  // Extenciones permitidas  Porque sucede esto??
 
-// const filePath = (fileRoute) =>{
-//   // return new Promise((resolve, reject) => {
-//   fs.readFile(fileRoute, { encoding: 'utf8' }, (err, data) => { // fs.readFile()método se utiliza para leer archivos en su computadora. Este devuleve un objeto Buffer (secuencia de bytes de longitud fija)
-//   // Si no hay errores, 'data' será un objeto Buffer de Node.js. Al igual que pasa con readFileSync(), puedes pasar 'utf8' como segundo parámetro y
-//   // luego el callback como tercero de modo de que data sea un String y no un Buffer.
-//     if (data) {
-//       const str = data.toString();
-//       getLink(str, fileRoute)
-//       if(allLinks.length > 1) {
-//         allLinks.forEach((link) => {
-//         // console.log(cyanColor(link.file), greenColor(link.href), blueColor(link.text));
-//         linkStatus(link.href)
-//         .then((res) => {
-//           console.log(res, greenColor(link.href), blueColor(link.text))
-//         })
-//         .catch(err =>{
-//           console.log(err);
-//         })
-//         })
-//       }
-//       else{
-//         console.log(redColor('No se encontaron documentos con links'));
-//       }
-//     } else {
-//       console.log(redColor('Error: Ruta Invalida'));
-//       console.log(err.message);
-//     }
-//   });
-// // }) 
-// }
 const filePath = (fileRoute) =>{
-  return new Promise((resolve, reject) => {
+  // return new Promise((resolve, reject) => {
   fs.readFile(fileRoute, { encoding: 'utf8' }, (err, data) => { // fs.readFile()método se utiliza para leer archivos en su computadora. Este devuleve un objeto Buffer (secuencia de bytes de longitud fija)
   // Si no hay errores, 'data' será un objeto Buffer de Node.js. Al igual que pasa con readFileSync(), puedes pasar 'utf8' como segundo parámetro y
   // luego el callback como tercero de modo de que data sea un String y no un Buffer.
     if (data) {
       const str = data.toString();
-      // getLink(str, fileRoute)
-      resolve(getLink(str, fileRoute ))
+      getLink(str, fileRoute)
+      
+        // linkStatus(allLinks.href)
+        // .then((res) => {
+        //   console.log(res)
+        // //  res.forEach((link) =>{
+        // //    console.log(link)
+        // //  })
+        // })
+        // .catch(err =>{
+        //   console.log(err);
+        // })
+      if(allLinks.length > 1) {
+        allLinks.forEach((link) => {
+        // console.log(cyanColor(link.file), greenColor(link.href), blueColor(link.text));
+        linkStatus(link.href)
+        .then((res) => {
+          console.log(res)
+        //  res.forEach((link) =>{
+        //    console.log(link)
+        //  })
+        })
+        .catch(err =>{
+          console.log(err);
+        })
+        })
+      }
+      else{
+        console.log(redColor('No se encontaron documentos con links'));
+      }
     } else {
-      reject(console.log(redColor('Error: Ruta Invalida')))
+      console.log(redColor('Error: Ruta Invalida'));
+      console.log(err.message);
     }
   });
-})
+// }) 
 }
-
-
-
-
-
 
 // Funcion que obtiene el link, el texto y el archivo 
 const getLink = (fileMd, pathParameter) => {
@@ -88,20 +82,22 @@ const getLink = (fileMd, pathParameter) => {
       }
       // onlyLink.push(link.href)
       allLinks.push(detailsLinks)
-      
     }
   })
-  return allLinks
 }
 
 
 
 const linkStatus = (link) => {
   return new Promise((resolve, rejects) => {
+    // link.forEach((element) => {
      fetchUrl(link, (error, meta) => {
        if(meta){
         // brokenLiks.push(element.href)
-        resolve(meta.status);
+        resolve({ link: link, estatus: meta.status});
+        //  brokenLiks.push(element.href)
+        //  console.log('______________________________________')
+        //  console.log(element.href, element.file, meta.status, element.text, redColor('Fail'))
        } else {
         rejects(error)
        }
@@ -148,10 +144,9 @@ const linkStatus = (link) => {
 
 
 const directoryPath = (pachParameter) => {
-  return new Promise((resolve, reject) => {
   fs.readdir(pachParameter, (err, data) => {
     if(err){
-      reject(console.log(clc.red('Directorio no encontrado')));
+      console.log(clc.red('Directorio no encontrado'));
       console.log(err.me)
     } else {
       filter =[]
@@ -166,19 +161,11 @@ const directoryPath = (pachParameter) => {
       } else {
         filter.forEach(fileMarkdown=> {
           const absolutePath = `${pachParameter}\\${fileMarkdown}`;
-          resolve(absolutePath)
-          // resolve(filePath(absolutePath)
-          // .then(res => {
-          //   console.log(res);
-          // })
-          // .catch(err =>{
-          //   console.log(err)
-          // }))
+          filePath(absolutePath)
           })
       }
     }
   });
-})
 } 
 
 

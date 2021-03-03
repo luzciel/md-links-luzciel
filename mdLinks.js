@@ -11,20 +11,43 @@ const greenColor = clc.green.italic;
 const optionsArgv = process.argv[3];
 const twoOptionsArgv = process.argv[4];
 
-const commandLineInterface = (folderParameter) => {
-  if (fs.lstatSync(folderParameter).isFile()) {
+// const commandLineInterface = (folderParameter) => {
+  if (fs.lstatSync(folder).isFile()) {
       console.log(greenColor("Es un archivo"))
-       filePath(folder)
+      filePath(folder)
+      .then(res => {
+        // console.log(res)
+        options(res, optionsArgv, folder, twoOptionsArgv );
+      })
+      .catch(err =>{
+        console.log(err)
+      })
     } else {
       console.log(greenColor("Es una carpeta"))
-      directoryPath(folderParameter);
+      directoryPath(folder)
+      .then(rest => {
+        console.log(rest)
+        filePath(rest)
+        .then(res => {
+          // console.log(res)
+          options(res, optionsArgv, folder, twoOptionsArgv );
+        })
+        .catch(err =>{
+          console.log(err)
+        })
+        // options(rest, optionsArgv, folder, twoOptionsArgv );
+      })
+      .catch(err =>{
+        console.log(err)
+      })
     }
-}
+// }
+// }
 
-const options = (optionsParameter, folderParameter, twoOptionsParameter) => {
+const options = (res, optionsParameter, folderParameter, twoOptionsParameter) => {
   if (folderParameter && !optionsParameter ) {
-    console.log("entro al commandLineInterface()")
-    commandLineInterface(folderParameter);
+    console.log(111, res)
+    // commandLineInterface(folderParameter);
   } else if (optionsParameter === '--validate' && !twoOptionsParameter) {
       console.log("entro al --validate");
 
@@ -39,4 +62,4 @@ const options = (optionsParameter, folderParameter, twoOptionsParameter) => {
   }
   }
 
-options(optionsArgv, folder, twoOptionsArgv );
+// options(optionsArgv, folder, twoOptionsArgv );
