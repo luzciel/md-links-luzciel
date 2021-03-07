@@ -169,6 +169,35 @@ const directoryPath = (pachParameter) => {
 } 
 
 
+const directoryPath = (pachParameter) => {
+  const file = [];
+  return new Promise((resolve, reject) => {
+    fs.readdir(pachParameter, (err, data) => {
+      if (err) {
+        reject(console.log(clc.red('Directorio no encontrado')));
+        console.log(err.me)
+      } else {
+        filter = []
+        data.forEach(file => {
+          if (allowedExtensions.exec(path.extname(file))) { //El método exec() ejecuta una busqueda sobre las coincidencias de una expresión regular en una cadena especifica. Devuelve el resultado como array, o null.
+            //path.extname () devuelve la extensión del path, desde la última aparición del carácter .(punto)  (ejemplo .js , .txt)
+            filter.push(file)
+          }
+        });
+        if (filter.length === 0) {
+          console.log(redColor('No se econtraron archivos con extension Markdown'));
+        } else {
+          filter.forEach(fileMarkdown => {
+            const absolutePath = `${pachParameter}\\${fileMarkdown}`;
+            console.log(11, absolutePath)
+            file.push(absolutePath)
+          })
+          resolve(file)
+        }
+      }
+    });
+  })
+}
 
 
 
@@ -177,3 +206,66 @@ module.exports = {
   directoryPath,
   filePath
 }
+
+
+
+
+
+
+
+
+const fs = require('fs');
+const path = require('path');
+const clc = require('cli-color');
+const {filePath, directoryPath, opcionFile, opcionValidate, opcionStats, opcionStatsValidate, uniqueLinks} = require('./index');
+
+
+// Recibe una ruta
+let folder = process.argv[2];
+// Métodos de path que devuelven una ruta absoluta
+folder = path.resolve(folder); // Absoluta
+folder = path.normalize(folder); // normaliza y resuelve '..' y '.'
+// const folder = process.argv[2];
+const optionsArgv = process.argv[3];
+const twoOptionsArgv = process.argv[4];
+const redColor = clc.red.bold;
+const greenColor = clc.green.italic;
+
+
+
+
+const options = (folderParameter, optionsParameter, twoOptionsParameter) => {
+  if (folderParameter && !optionsParameter ) {
+    opcionFile(folderParameter)
+  } else if (optionsParameter === '--validate' && !twoOptionsParameter) {
+      opcionValidate(folderParameter)
+
+  } else if (optionsParameter == '--stats' && !twoOptionsParameter) {
+    opcionStats(folderParameter)
+    uniqueLinks(folderParameter)
+
+  } else if (optionsParameter == '--stats' && twoOptionsParameter === '--validate' || optionsParameter === '--validate' &&  twoOptionsParameter === '--stats' ) {
+    opcionStatsValidate(folderParameter)
+    uniqueLinks(folderParameter)
+
+  } else {
+    console.log(redColor("Error: Introduce un archivo valido"));
+  }
+}
+
+
+  if (fs.lstatSync(folder).isFile()) {
+        options(folder, optionsArgv, twoOptionsArgv );
+    } else {
+      console.log(redColor("Es una carpeta"))
+      directoryPath(folder)
+      .then(rest => {
+        rest.map(fileMarkdown => {
+        options(fileMarkdown, optionsArgv, twoOptionsArgv);
+        })
+      })
+      .catch(err =>{
+        console.log(err)
+      })
+    }
+

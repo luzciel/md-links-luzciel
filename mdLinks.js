@@ -1,10 +1,15 @@
-const fs = require('fs'); // fs es el módulo del sistema de archivos Node.js le permite trabajar con el sistema de archivos en su computadora.
+const fs = require('fs');
+const path = require('path');
 const clc = require('cli-color');
-// const directoryPath = require('./index')
-// const { fetchUrl } = require('fetch');
-const {filePath, directoryPath, opcionFile, opcionValidate, opcionStats, opcionStatsValidate, unico} = require('./index');
+const {filePath, directoryPath, opcionFile, opcionValidate, opcionStats, opcionStatsValidate, uniqueLinks} = require('./index');
 
-const folder = process.argv[2];  //comienza con 2 porque los dos primeros elementos en la matriz process.argv siempre es['path/to/node.exe', 'path/to/js/file', ...]
+
+// Recibe una ruta
+let folder = process.argv[2];
+// Métodos de path que devuelven una ruta absoluta
+folder = path.resolve(folder); // Absoluta
+folder = path.normalize(folder); // normaliza y resuelve '..' y '.'
+// const folder = process.argv[2];
 const optionsArgv = process.argv[3];
 const twoOptionsArgv = process.argv[4];
 const redColor = clc.red.bold;
@@ -21,42 +26,22 @@ const options = (folderParameter, optionsParameter, twoOptionsParameter) => {
 
   } else if (optionsParameter == '--stats' && !twoOptionsParameter) {
     opcionStats(folderParameter)
-    unico(folderParameter)
+    uniqueLinks(folderParameter)
 
   } else if (optionsParameter == '--stats' && twoOptionsParameter === '--validate' || optionsParameter === '--validate' &&  twoOptionsParameter === '--stats' ) {
     opcionStatsValidate(folderParameter)
-    unico(folderParameter)
+    uniqueLinks(folderParameter)
 
   } else {
-    console.log("Error instrucciones");
+    console.log(redColor("Error: Introduce un archivo valido"));
   }
 }
 
 
-
-// const commandLineInterface = (folderParameter) => {
   if (fs.lstatSync(folder).isFile()) {
-      console.log(greenColor("Es un archivo"))
         options(folder, optionsArgv, twoOptionsArgv );
     } else {
-      console.log(greenColor("Es una carpeta"))
-      directoryPath(folder)
-      .then(rest => {
-        // console.log(666666, rest)
-        filePath(rest)
-        .then(res => {
-          // console.log(res)
-          options(res, optionsArgv, folder, twoOptionsArgv );
-        })
-        .catch(err =>{
-          console.log(err)
-        })
-        // options(rest, optionsArgv, folder, twoOptionsArgv );
-      })
-      .catch(err =>{
-        console.log(err)
-      })
+      console.log(redColor("Error: Solo se analizan Archivos"))
     }
-// }
-// }
+
 

@@ -19,17 +19,23 @@ const greenColor = clc.green.italic;
 const greenColorBold = clc.green.bold;
 const blueColor = clc.blue;
 const magentaColor = clc.magenta;
-const cyanColor = clc.cyan.bold;
+const cyanColorBold = clc.cyan.bold;
+const cyanColor= clc.cyan;
 
-const allowedExtensions = /(.md|.markdown|.mdown|.mkdn|.mkd|.mdwn|.mdtxt|.text|.Rmd )$/i;  // Extenciones permitidas  Porque sucede esto??
+const allowedExtensions = /(.md|.markdown|.mdown|.mkdn|.mkd|.mdwn|.mdtxt|.text|.Rmd )$/i;
 
-
+// Funcion que lee el archivo y devuelve getLink (array con link, el texto y el archivo)
 const filePath = (fileRoute) => {
   return new Promise((resolve, reject) => {
     fs.readFile(fileRoute, { encoding: 'utf8' }, (err, data) => { // fs.readFile()método se utiliza para leer archivos en su computadora. Este devuleve un objeto Buffer (secuencia de bytes de longitud fija)
       if (data) {
-        const str = data.toString();
-        resolve(getLink(str, fileRoute))
+          if (allowedExtensions.exec(path.extname(fileRoute))) { //El método exec() ejecuta una busqueda sobre las coincidencias de una expresión regular en una cadena especifica. Devuelve el resultado como array, o null.
+            //path.extname () devuelve la extensión del path, desde la última aparición del carácter .(punto)  (ejemplo .js , .txt)
+            const str = data.toString();
+            resolve(getLink(str, fileRoute))
+          } else {
+            console.log(redColor('Error: Solo se permiten archivos con extension Markdown'));
+          }
       } else {
         reject(console.log(redColor('Error: Ruta Invalida')))
       }
@@ -39,8 +45,8 @@ const filePath = (fileRoute) => {
 
 // Funcion que obtiene el link, el texto y el archivo 
 const getLink = (fileMd, pathParameter) => {
-  tokens = markdownIt.render(fileMd); // convierte el archivo .md a html
-  const domContent = new JSDOM(tokens); // 
+  const renderHtml = markdownIt.render(fileMd); // convierte el archivo .md a html
+  const domContent = new JSDOM(renderHtml); 
   const links = Array.from(domContent.window.document.querySelectorAll('a'));
   allLinks = [];
   links.forEach((link) => {
@@ -51,18 +57,50 @@ const getLink = (fileMd, pathParameter) => {
         file: pathParameter,
       }
       allLinks.push(detailsLinks)
-    }
+    } 
   })
   return allLinks
 }
 
+// Funcion que obtiene el estatus del Link
+const linkStatus = (link) => {
+  return new Promise((resolve, rejects) => {
+    fetchUrl(link, (error, meta) => {
+      if (meta) {
+        resolve(meta.status);
+      } else {
+        rejects(error)
+      }
+    })
+  })
+}
+
+// Funcion que obtiene los links Unicos
+const uniqueLinks = (folder) => {
+  const unique = [];
+  filePath(folder)
+    .then(res => {
+      res.map((link) => {
+        unique.push(link.href)
+      })
+      const mySet = new Set(unique);
+      console.log(greenColorBold("Unique:", mySet.size))
+    })
+    .catch(err => {
+      console.log(err)
+    })
+}
 
 const opcionFile = (folder) => {
   filePath(folder)
     .then(res => {
-      res.map(element => {
-        console.log(cyanColor(element.file), greenColor(element.href), blueColor(element.text));
-      })
+      if(res.length < 1){
+        console.log(redColor('Este archivo no contiene Links'))
+      } else {
+        res.map(element => {
+          console.log(cyanColorBold('File: ' + element.file + '\n'), greenColor('href: ' + element.href + '\n'), blueColor('text: ' + element.text + '\n'));
+        })
+      }
     })
     .catch(err => {
       console.log(err)
@@ -96,7 +134,7 @@ const opcionValidate = (folder) => {
 const opcionStats = (folder) => {
   filePath(folder)
     .then(res => {
-      console.log(cyanColor('TOTAL:', res.length))
+      console.log(cyanColorBold('TOTAL:', res.length))
     })
     .catch(err => {
       console.log(err)
@@ -118,7 +156,7 @@ const opcionStatsValidate = (folder) => {
               return status;
             }
           })
-          console.log(cyanColor('Total:', res.length))
+          console.log(cyanColorBold('Total:', res.length))
           console.log(redColor('Broken:', result.length))
         })
     })
@@ -129,40 +167,8 @@ const opcionStatsValidate = (folder) => {
 
 
 
-// Funcion que obtiene el estatus del Link
-const linkStatus = (link) => {
-  return new Promise((resolve, rejects) => {
-    fetchUrl(link, (error, meta) => {
-      if (meta) {
-        resolve(meta.status);
-      } else {
-        rejects(error)
-      }
-    })
-  })
-}
-
-
-
-const unico = (folder) => {
-  const unique = [];
-  filePath(folder)
-    .then(res => {
-      res.map((link) => {
-        unique.push(link.href)
-      })
-      const mySet = new Set(unique);
-      console.log(greenColorBold("Unique:", mySet.size))
-    })
-    .catch(err => {
-      console.log(err)
-    })
-}
-
-
-
-
 const directoryPath = (pachParameter) => {
+  const file = [];
   return new Promise((resolve, reject) => {
     fs.readdir(pachParameter, (err, data) => {
       if (err) {
@@ -176,19 +182,15 @@ const directoryPath = (pachParameter) => {
             filter.push(file)
           }
         });
-        if (filter.length === 0) { // Object.entries devuelve una lista con las claves y valores del objeto. En caso el objeto sea vacío va a devolver un array vacío.
+        if (filter.length === 0) {
           console.log(redColor('No se econtraron archivos con extension Markdown'));
         } else {
           filter.forEach(fileMarkdown => {
             const absolutePath = `${pachParameter}\\${fileMarkdown}`;
-            resolve(filePath(absolutePath)
-              .then(res => {
-                console.log(333, res);
-              })
-              .catch(err => {
-                console.log(err)
-              }))
+            console.log(11, absolutePath)
+            file.push(absolutePath)
           })
+          resolve(file)
         }
       }
     });
@@ -203,5 +205,5 @@ module.exports = {
   opcionValidate,
   opcionStats,
   opcionStatsValidate,
-  unico
+  uniqueLinks
 }
