@@ -11,7 +11,7 @@
 
 [Md-links-Luzciel](https://social-veg.web.app/)
 
-![](src/imagenes/web2.png)
+![logo](https://github.com/luzciel/SCL015-md-links/blob/master/image/logo.png)
 
 
 ## 1. Definición del Proyecto
