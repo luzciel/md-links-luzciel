@@ -9,14 +9,12 @@
 * [5. Autor](#5-Autor)
 
 
-[Md-links-Luzciel] (https://social-veg.web.app/)
-
 ![](src/imagenes/web2.png)
 
 
 ## 1. Definición del Proyecto
 
-Md-links-luzciel es una libreria que lee y analiza archivos en formato MARKDOWN para verificar los links contenidos y reportar su estado: sin conexión, útiles o rotos y dar algunas estadísticas que se imprimirán en consola como la cantidad de links, el estado de los links y los links únicos.
+Md-links-luzciel es una libreria que lee y analiza archivos en formato markdown para verificar los links contenidos y reportar su estado (sin conexión, útiles o rotos) y dar algunas estadísticas que se imprimirán en consola como la cantidad de links, el estado de los links y  el total de links únicos.
 
 
 ## 2. Instalación
