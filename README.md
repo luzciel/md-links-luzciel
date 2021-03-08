@@ -1,4 +1,3 @@
-# Social Veg 
 
 ## Índice
 
@@ -9,7 +8,7 @@
 * [5. Autor](#5-Autor)
 
 
-![](src/imagenes/web2.png)
+![logo](https://github.com/luzciel/SCL015-md-links/blob/master/image/logo.png)
 
 
 ## 1. Definición del Proyecto
@@ -24,7 +23,7 @@ Md-links-luzciel es una libreria que lee y analiza archivos en formato markdown 
 * Para instalar la librería ejecuta el siguiente comando en la terminal:
 
 ```js
-$ npm i danielablancom-md-links 
+$ npm i md-links-luzciel
 ```
 ## 3. Uso de la libreria
 
@@ -47,7 +46,7 @@ md-links <path-to-file> [options]
  ```
 md-links <path-to-file.md>   
 ```
-![opcion file](image\opcion-file.png)
+![opcion file](https://github.com/luzciel/SCL015-md-links/blob/master/image/opcion-file.png)
 
 En este caso se obtiene como resultado:
 - File: Archivo o ruta donde fue encontrado el link.
@@ -61,7 +60,7 @@ Entrega la validacion o status de los links (status: 200, 404, 500 etc).
  ```
 md-links <path-to-file.md> --validate  
 ```
-![opcion validate](image\validate.png)
+![opcion validate](https://github.com/luzciel/SCL015-md-links/blob/master/image/validate.png)
 
 
 **--stats**
@@ -72,7 +71,7 @@ Entrega las siguientes estadística: `Total` el total de links encontrados; `Uni
 md-links <path-to-file.md> --stats  
 ```
 
-![opcion stats](image\stats.png)
+![opcion stats](https://github.com/luzciel/SCL015-md-links/blob/master/image/stats.png)
 
 
 **--stats --validate**
@@ -81,11 +80,11 @@ Las dos opiciones combinadas, además de Total y Unique, agregan la siguiente es
 
 `md-links <path-to-file.md> --stats --validate || md-links <path-to-file.md> --validate --stats`
 
-![opcion file](image\opcion-file.png)
+![opcion stats and validate](https://github.com/luzciel/SCL015-md-links/blob/master/image/validate-stats.png)
 
 
 ## 4. Diagrama de Flujo
-![opcion validate and stats](image\validate-stats.png)
+![opcion validate and stats](https://github.com/luzciel/SCL015-md-links/blob/master/image/diagrama-de-flujo.png)
 
 ## 5. Autor
 * Luzciel Montesinos
