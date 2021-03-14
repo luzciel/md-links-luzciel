@@ -167,39 +167,7 @@ const opcionStatsValidate = (folder) => {
 
 
 
-const directoryPath = (pachParameter) => {
-  const file = [];
-  return new Promise((resolve, reject) => {
-    fs.readdir(pachParameter, (err, data) => {
-      if (err) {
-        reject(console.log(clc.red('Directorio no encontrado')));
-        console.log(err.me)
-      } else {
-        filter = []
-        data.forEach(file => {
-          if (allowedExtensions.exec(path.extname(file))) { //El método exec() ejecuta una busqueda sobre las coincidencias de una expresión regular en una cadena especifica. Devuelve el resultado como array, o null.
-            //path.extname () devuelve la extensión del path, desde la última aparición del carácter .(punto)  (ejemplo .js , .txt)
-            filter.push(file)
-          }
-        });
-        if (filter.length === 0) {
-          console.log(redColor('No se econtraron archivos con extension Markdown'));
-        } else {
-          filter.forEach(fileMarkdown => {
-            const absolutePath = `${pachParameter}\\${fileMarkdown}`;
-            console.log(11, absolutePath)
-            file.push(absolutePath)
-          })
-          resolve(file)
-        }
-      }
-    });
-  })
-}
-
-
 module.exports = {
-  directoryPath,
   filePath,
   opcionFile,
   opcionValidate,

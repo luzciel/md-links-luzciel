@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const clc = require('cli-color');
-const {filePath, directoryPath, opcionFile, opcionValidate, opcionStats, opcionStatsValidate, uniqueLinks} = require('./index');
+const {opcionFile, opcionValidate, opcionStats, opcionStatsValidate, uniqueLinks} = require('./index');
 
 
 // Recibe una ruta
